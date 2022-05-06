@@ -1,6 +1,7 @@
 package com.jzh;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -23,7 +24,7 @@ public class Child {
                 try {
                     synchronized (this) {
                         if (MessageWindow.newMsgFromOther == null) {
-                            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+                            BufferedReader br = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
                             MessageWindow.newMsgFromOther = br.readLine();
                         }
                     }
@@ -39,7 +40,7 @@ public class Child {
                 try {
                     synchronized (this) {
                         if (MessageWindow.mySendMsg != null && !MessageWindow.mySendMsg.equals("")) {
-                            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+                            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
                             bw.write(MessageWindow.mySendMsg);
                             bw.flush();
                             MessageWindow.mySendMsg = null;

@@ -37,6 +37,7 @@ public class MessageWindow extends JFrame {
         showMsg.setWrapStyleWord(true);// 激活断行不断字功能
         showMsg.setBackground(Color.gray);
         showMsg.setFont(new Font("微软雅黑", Font.PLAIN, 18));
+        showMsg.setForeground(Color.red);
 
         // 发送消息的按钮
         JButton sendButton = new JButton("send");
@@ -44,7 +45,7 @@ public class MessageWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 synchronized (this) {
-                    String msg = name + ":" + sendMsg.getText() + "\n";
+                    String msg = name + "--->>> " + sendMsg.getText() + "\n";
                     MessageWindow.mySendMsg = msg;
                     showMsg.append(msg);
                     sendMsg.setText("");
@@ -101,7 +102,7 @@ public class MessageWindow extends JFrame {
                     }
                 }
             }
-        }, 0, 600);
+        }, 0, 10);
 
     }
 }

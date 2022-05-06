@@ -1,6 +1,7 @@
 package com.jzh;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -13,19 +14,10 @@ import java.util.TimerTask;
 public class Father {
     public static void main(String[] args) throws IOException, InterruptedException {
         Father father = new Father();
-        MessageWindow window = new MessageWindow("Father", 0);
+        new MessageWindow("Father", 0);
         Timer timer1 = new Timer();
         Timer timer2 = new Timer();
         Timer timer3 = new Timer();
-        Timer timer4 = new Timer();
-        timer4.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (!window.isVisible()) {
-
-                }
-            }
-        }, 0, 1000);
         // 检测是否创建子进程
         timer1.schedule(new TimerTask() {
             @Override
@@ -50,7 +42,7 @@ public class Father {
                 synchronized (this) {
                     try {
                         if (father.getChild() != null) {
-                            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(father.getChild().getOutputStream()));
+                            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(father.getChild().getOutputStream(), StandardCharsets.UTF_8));
                             if (MessageWindow.mySendMsg != null && !MessageWindow.mySendMsg.equals("")) {
                                 bw.write(MessageWindow.mySendMsg);
                                 bw.flush();
@@ -70,7 +62,7 @@ public class Father {
                 synchronized (this) {
                     try {
                         if (father.getChild() != null) {
-                            BufferedReader br = new BufferedReader(new InputStreamReader(father.getChild().getInputStream()));
+                            BufferedReader br = new BufferedReader(new InputStreamReader(father.getChild().getInputStream(), StandardCharsets.UTF_8));
                             if (MessageWindow.newMsgFromOther == null) {
                                 MessageWindow.newMsgFromOther = br.readLine();
                             }
