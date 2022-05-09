@@ -13,43 +13,26 @@ import java.util.TimerTask;
  */
 public class Child {
     public static void main(String[] args) {
-        Child child = new Child();
-        new MessageWindow("Child", 1);
+        MessageWindow window = new MessageWindow("Child", 1);
         Timer timer1 = new Timer();
         Timer timer2 = new Timer();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
         // 检测是否接收消息
         timer1.schedule(new TimerTask() {
             @Override
             public void run() {
-                try {
-                    synchronized (this) {
-                        if (MessageWindow.newMsgFromOther == null) {
-                            BufferedReader br = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-                            MessageWindow.newMsgFromOther = br.readLine();
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Common.sendMsg(br);
             }
         }, 0, 500);
         // 检测是否发送消息
         timer2.schedule(new TimerTask() {
             @Override
             public void run() {
-                try {
-                    synchronized (this) {
-                        if (MessageWindow.mySendMsg != null && !MessageWindow.mySendMsg.equals("")) {
-                            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
-                            bw.write(MessageWindow.mySendMsg);
-                            bw.flush();
-                            MessageWindow.mySendMsg = null;
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                Common.receiveMsg(bw);
             }
         }, 0, 500);
+        // 结束任务，关闭资源，退出进程
+        Common.endAll(window, bw, br, timer1, timer2);
     }
 }

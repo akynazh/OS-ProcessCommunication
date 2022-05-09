@@ -2,8 +2,6 @@ package com.jzh;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,7 +26,6 @@ public class MessageWindow extends JFrame {
      * @date 2022/5/6 12:51
      */
     public MessageWindow(String name, int type) {
-
         // 写入发送消息的文本框
         JTextArea sendMsg = new JTextArea(1, 10);
         // 展示消息的文本框
@@ -37,29 +34,28 @@ public class MessageWindow extends JFrame {
         showMsg.setWrapStyleWord(true);// 激活断行不断字功能
         showMsg.setBackground(Color.gray);
         showMsg.setFont(new Font("微软雅黑", Font.PLAIN, 18));
-        showMsg.setForeground(Color.red);
+        if (type == 1) {
+            showMsg.setForeground(Color.green);
+        } else {
+            showMsg.setForeground(Color.blue);
+        }
 
         // 发送消息的按钮
         JButton sendButton = new JButton("send");
-        sendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                synchronized (this) {
-                    String msg = name + "--->>> " + sendMsg.getText() + "\n";
-                    MessageWindow.mySendMsg = msg;
-                    showMsg.append(msg);
-                    sendMsg.setText("");
-                }
+        sendButton.addActionListener(e -> {
+            synchronized (MessageWindow.class) {
+                String msg = "[" + name + " ~]# " + sendMsg.getText() + "\n";
+                MessageWindow.mySendMsg = msg;
+                showMsg.append(msg);
+                sendMsg.setText("");
             }
         });
         // 创建子进程的按钮
         JButton createButton = new JButton("create child");
-        createButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                synchronized (this) {
-                    MessageWindow.createTag = true;
-                }
+        createButton.addActionListener(e -> {
+            synchronized (MessageWindow.class) {
+                MessageWindow.createTag = true;
+                createButton.setVisible(false);
             }
         });
 
@@ -88,14 +84,14 @@ public class MessageWindow extends JFrame {
             setLocation(900, 300);
         setVisible(true);
         setTitle(name);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 
         // 监听其他进程的消息
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                synchronized (this) {
+                synchronized (MessageWindow.class) {
                     if (MessageWindow.newMsgFromOther != null && !MessageWindow.newMsgFromOther.equals("")) {
                         showMsg.append(MessageWindow.newMsgFromOther + "\r\n");
                         MessageWindow.newMsgFromOther = null;
@@ -103,6 +99,5 @@ public class MessageWindow extends JFrame {
                 }
             }
         }, 0, 10);
-
     }
 }

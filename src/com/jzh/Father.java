@@ -12,68 +12,49 @@ import java.util.TimerTask;
  * @Date 2022/5/5 19:21
  */
 public class Father {
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) throws IOException {
         Father father = new Father();
-        new MessageWindow("Father", 0);
+        MessageWindow window = new MessageWindow("Father", 0);
+        BufferedWriter bw;
+        BufferedReader br;
         Timer timer1 = new Timer();
         Timer timer2 = new Timer();
-        Timer timer3 = new Timer();
         // 检测是否创建子进程
+        while (true) {
+            synchronized (MessageWindow.class) {
+                if (MessageWindow.createTag) {
+                    father.createChildProcess();
+                    bw = new BufferedWriter(new OutputStreamWriter(father.getChild().getOutputStream(), StandardCharsets.UTF_8));
+                    br = new BufferedReader(new InputStreamReader(father.getChild().getInputStream(), StandardCharsets.UTF_8));
+                    break;
+                }
+                if (!window.isVisible()) {
+                    System.exit(0);
+                }
+            }
+        }
+        // 检测是否发送消息
         timer1.schedule(new TimerTask() {
             @Override
             public void run() {
-                synchronized (this) {
-                    try {
-                        // 检测是否创建子进程
-                        if (MessageWindow.createTag) {
-                            MessageWindow.createTag = false;
-                            father.createChildProcess();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }, 0, 500);
-        // 检测是否发送消息
-        timer2.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                synchronized (this) {
-                    try {
-                        if (father.getChild() != null) {
-                            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(father.getChild().getOutputStream(), StandardCharsets.UTF_8));
-                            if (MessageWindow.mySendMsg != null && !MessageWindow.mySendMsg.equals("")) {
-                                bw.write(MessageWindow.mySendMsg);
-                                bw.flush();
-                                MessageWindow.mySendMsg = null;
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                if (father.getChild() != null) {
+                    Common.receiveMsg(bw);
                 }
             }
         }, 0, 500);
         // 检测是否接收消息
-        timer3.schedule(new TimerTask() {
+        timer2.schedule(new TimerTask() {
             @Override
             public void run() {
-                synchronized (this) {
-                    try {
-                        if (father.getChild() != null) {
-                            BufferedReader br = new BufferedReader(new InputStreamReader(father.getChild().getInputStream(), StandardCharsets.UTF_8));
-                            if (MessageWindow.newMsgFromOther == null) {
-                                MessageWindow.newMsgFromOther = br.readLine();
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                if (father.getChild() != null) {
+                    Common.sendMsg(br);
                 }
             }
         }, 0, 500);
+        // 结束任务，关闭资源，退出进程
+        Common.endAll(window, bw, br, timer1, timer2);
     }
+
 
     // 创建的子进程
     private Process child;
