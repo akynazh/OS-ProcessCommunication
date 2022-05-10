@@ -33,21 +33,21 @@ public class Father {
                 }
             }
         }
-        // 检测是否发送消息
+        // 检测是否接收消息
         timer1.schedule(new TimerTask() {
             @Override
             public void run() {
                 if (father.getChild() != null) {
-                    Common.receiveMsg(bw);
+                    Common.receiveMsg(br);
                 }
             }
         }, 0, 500);
-        // 检测是否接收消息
+        // 检测是否发送消息
         timer2.schedule(new TimerTask() {
             @Override
             public void run() {
                 if (father.getChild() != null) {
-                    Common.sendMsg(br);
+                    Common.sendMsg(bw);
                 }
             }
         }, 0, 500);

@@ -8,17 +8,17 @@ import java.util.TimerTask;
 
 /**
  * @version 1.0
- * @description
+ * @description 共同代码
  * @Author Jiang Zhihang
  * @Date 2022/5/9 22:51
  */
 public class Common {
     /**
-     * @description: 发送消息
+     * @description: 接收消息
      * @author Jiang Zhihang
      * @date 2022/5/9 22:59
      */
-    public static void sendMsg(BufferedReader br) {
+    public static void receiveMsg(BufferedReader br) {
         try {
             if (MessageWindow.newMsgFromOther == null) {
                 String s = br.readLine();
@@ -31,11 +31,11 @@ public class Common {
         }
     }
     /**
-     * @description: 接收消息
+     * @description: 发送消息
      * @author Jiang Zhihang
      * @date 2022/5/9 22:59
      */
-    public static void receiveMsg(BufferedWriter bw) {
+    public static void sendMsg(BufferedWriter bw) {
         try {
             if (MessageWindow.mySendMsg != null && !MessageWindow.mySendMsg.equals("")) {
                 bw.write(MessageWindow.mySendMsg);

@@ -32,7 +32,11 @@ public class MessageWindow extends JFrame {
         JTextArea showMsg = new JTextArea();
         showMsg.setLineWrap(true);// 激活自动换行功能
         showMsg.setWrapStyleWord(true);// 激活断行不断字功能
-        showMsg.setBackground(Color.gray);
+        if (type == 1) {
+            showMsg.setBackground(Color.gray);
+        } else {
+            showMsg.setBackground(Color.white);
+        }
         showMsg.setFont(new Font("微软雅黑", Font.PLAIN, 18));
         if (type == 1) {
             showMsg.setForeground(Color.green);

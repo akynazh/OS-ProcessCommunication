@@ -14,22 +14,22 @@ import java.util.TimerTask;
 public class Child {
     public static void main(String[] args) {
         MessageWindow window = new MessageWindow("Child", 1);
-        Timer timer1 = new Timer();
-        Timer timer2 = new Timer();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
+        Timer timer1 = new Timer();
+        Timer timer2 = new Timer();
         // 检测是否接收消息
         timer1.schedule(new TimerTask() {
             @Override
             public void run() {
-                Common.sendMsg(br);
+                Common.receiveMsg(br);
             }
         }, 0, 500);
         // 检测是否发送消息
         timer2.schedule(new TimerTask() {
             @Override
             public void run() {
-                Common.receiveMsg(bw);
+                Common.sendMsg(bw);
             }
         }, 0, 500);
         // 结束任务，关闭资源，退出进程
